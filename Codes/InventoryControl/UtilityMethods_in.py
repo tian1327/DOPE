@@ -51,17 +51,17 @@ class utils:
             self.C_Tao[s] = np.zeros(l)
         
         for s in range(self.N_STATES):
-            self.P_hat[s] = {}
+            self.P_hat[s] = {} # estimated transition probabilities
             l = len(self.ACTIONS[s])
-            self.NUMBER_OF_OCCURANCES[s] = np.zeros(l)
+            self.NUMBER_OF_OCCURANCES[s] = np.zeros(l) # initialize the number of occurences of [s][a]
             self.beta_prob_1[s] = np.zeros(l)
             self.beta_prob_2[s] = np.zeros(l)
             self.beta_prob_T[s] = np.zeros(l)
-            self.NUMBER_OF_OCCURANCES_p[s] = np.zeros((l, N_STATES))
-            self.beta_prob[s] = np.zeros((l, N_STATES))
+            self.NUMBER_OF_OCCURANCES_p[s] = np.zeros((l, N_STATES)) # initialize the number of occurences of [s][a, s']
+            self.beta_prob[s] = np.zeros((l, N_STATES)) # [s][a, s']
             
             for a in self.ACTIONS[s]:
-                self.P_hat[s][a] = np.zeros(self.N_STATES)
+                self.P_hat[s][a] = np.zeros(self.N_STATES) 
                 for s_1 in range(self.N_STATES):
                     if self.P[s][a][s_1] > 0:
                         self.Psparse[s][a].append(s_1)
@@ -71,7 +71,7 @@ class utils:
         probs = np.zeros((self.N_STATES))
         for next_s in range(self.N_STATES):
             probs[next_s] = self.P[s][a][next_s]
-        next_state = int(np.random.choice(np.arange(self.N_STATES),1,replace=True,p=probs))
+        next_state = int(np.random.choice(np.arange(self.N_STATES),1,replace=True,p=probs)) # find next_state based on the transition probabilities
         rew = self.R[s][a]
         cost = self.C[s][a]
         return next_state,rew, cost
@@ -90,7 +90,7 @@ class utils:
             for a in self.ACTIONS[s]:
                 if self.NUMBER_OF_OCCURANCES[s][a] == 0:
                     self.beta_prob[s][a, :] = np.ones(self.N_STATES)
-                    self.beta_prob_T[s][a] = np.sqrt(ep/max(self.NUMBER_OF_OCCURANCES[s][a],1))
+                    self.beta_prob_T[s][a] = np.sqrt(ep/max(self.NUMBER_OF_OCCURANCES[s][a],1)) # not sure what is beta_prob_T used for?
                 else:
                     if mode == 2:
                         self.beta_prob[s][a, :] = min(np.sqrt(ep/max(self.NUMBER_OF_OCCURANCES[s][a], 1)), 1)*np.ones(self.N_STATES)
@@ -99,8 +99,12 @@ class utils:
                         
                     for s_1 in range(self.N_STATES):
                         if mode == 0:
+                            # DOPE policy, which equation?
                             self.beta_prob[s][a,s_1] = min(np.sqrt(ep*self.P_hat[s][a][s_1]*(1-self.P_hat[s][a][s_1])/max(self.NUMBER_OF_OCCURANCES[s][a],1)) + ep/(max(self.NUMBER_OF_OCCURANCES[s][a],1)), ep/(max(np.sqrt(self.NUMBER_OF_OCCURANCES[s][a]),1)), 1)
+                        
                         elif mode == 1:
+                            # safe base policy 
+                            # equation (5) in the paper to calculate the confidence interval for P
                             self.beta_prob[s][a, s_1] = min(2*np.sqrt(ep*self.P_hat[s][a][s_1]*(1-self.P_hat[s][a][s_1])/max(self.NUMBER_OF_OCCURANCES[s][a],1)) + 14*ep/(3*max(self.NUMBER_OF_OCCURANCES[s][a],1)), 1)
                         
                 self.beta_prob_1[s][a] = max(self.beta_prob[s][a, :])
@@ -108,15 +112,18 @@ class utils:
 
 
     def update_empirical_model(self,ep):
+        # ep is not used here
+
         for s in range(self.N_STATES):
             for a in self.ACTIONS[s]:
                 if self.NUMBER_OF_OCCURANCES[s][a] == 0:
-                    self.P_hat[s][a] = 1/self.N_STATES*np.ones(self.N_STATES)
+                    self.P_hat[s][a] = 1/self.N_STATES*np.ones(self.N_STATES) # uniform distribution for unvisited state-action pairs
                 else:
                     for s_1 in range(self.N_STATES):
-                        self.P_hat[s][a][s_1] = self.NUMBER_OF_OCCURANCES_p[s][a,s_1]/(max(self.NUMBER_OF_OCCURANCES[s][a],1))
-                    self.P_hat[s][a] /= np.sum(self.P_hat[s][a])
-                if abs(sum(self.P_hat[s][a]) - 1)  >  0.001:
+                        self.P_hat[s][a][s_1] = self.NUMBER_OF_OCCURANCES_p[s][a,s_1]/(max(self.NUMBER_OF_OCCURANCES[s][a],1)) #calculate the estimated/empirical probabilities
+                    self.P_hat[s][a] /= np.sum(self.P_hat[s][a]) # normalize the probabilities
+
+                if abs(sum(self.P_hat[s][a]) - 1)  >  0.001: # sanity check  after updating the probabilities
                     print("empirical is wrong")
                     print(self.P_hat)
                     
@@ -203,7 +210,7 @@ class utils:
                                                                                   
                                                                                   
     def compute_opt_LP_Constrained(self, ep):
-        opt_policy = np.zeros((self.N_STATES,self.EPISODE_LENGTH,self.N_STATES)) #[s,h,a]
+        opt_policy = np.zeros((self.N_STATES,self.EPISODE_LENGTH,self.N_STATES)) #[s,h,a], note here the action dimension is N_STATES
         opt_prob = p.LpProblem("OPT_LP_problem",p.LpMaximize)
         opt_q = np.zeros((self.EPISODE_LENGTH,self.N_STATES,self.N_STATES)) #[h,s,a]
                                                                                   
@@ -239,7 +246,7 @@ class utils:
             for s in range(self.N_STATES):
                 for a in self.ACTIONS[s]:
                     opt_q[h,s,a] = q[(h,s,a)].varValue
-                for a in self.ACTIONS[s]:
+                for a in self.ACTIONS[s]: # for actions that are not available in the current state, their probability is 0
                     if np.sum(opt_q[h,s,:]) == 0:
                         opt_policy[s,h,a] = 1/len(self.ACTIONS[s])
                     else:

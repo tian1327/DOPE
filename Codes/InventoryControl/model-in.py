@@ -32,7 +32,7 @@ def h(x): # holding cost
 
 def f(x): # revenue function
     if x > 0:
-        return 8*x/100 # why devide by 100???
+        return 8*x/100 # why devide by 100?
     return 0
 
 def O(x): # purchase cost
@@ -40,7 +40,7 @@ def O(x): # purchase cost
         return K + 2*x # k is the fixed cost, 2 is the unit cost, x is the number of units purchased
     return 0
 
-N_STATES = 6 # number of states, max capacity of inventory, should this actually be 7?? This implementation is 0-5, but the paper mentions 0-6
+N_STATES = 6 # number of states, max capacity of inventory, should this actually be 7? This implementation is 0-5, but the paper mentions 0-6
 actions = {} # actions available in each state
 
 delta = 0.01 # bound
@@ -54,7 +54,7 @@ demand = [0.3,0.2,0.2,0.2,0.05,0.05] # probability of stochastic demand, dh in {
 
 for s in range(N_STATES): # 0-5
     actions[s] = []
-    for a in range(N_STATES - s): # shouldn't this be range(N_STATES - s + 1)???
+    for a in range(N_STATES - s): # shouldn't this be range(N_STATES - s + 1)?
         actions[s].append(a) # initialize available actions for each state
 
 for s in range(N_STATES):
@@ -126,8 +126,8 @@ EPS = 0.01 # not used
 M = 0 # not used
 
 util_methods_1 = utils(EPS, delta, M, P,R,C,EPISODE_LENGTH,N_STATES,actions,CONSTRAINT,C_b)
-opt_policy_con, opt_value_LP_con, opt_cost_LP_con, opt_q_con = util_methods_1.compute_opt_LP_Constrained(0) # 
-opt_policy_uncon, opt_value_LP_uncon, opt_cost_LP_uncon, opt_q_uncon = util_methods_1.compute_opt_LP_Unconstrained(0)
+opt_policy_con, opt_value_LP_con, opt_cost_LP_con, opt_q_con = util_methods_1.compute_opt_LP_Constrained(0) # constrained MDP
+opt_policy_uncon, opt_value_LP_uncon, opt_cost_LP_uncon, opt_q_uncon = util_methods_1.compute_opt_LP_Unconstrained(0) # unconstrained = standard MDP, not used in DOPE
 f = open('solution-in.pckl', 'wb')
 pickle.dump([opt_policy_con, opt_value_LP_con, opt_cost_LP_con, opt_q_con, opt_policy_uncon, opt_value_LP_uncon, opt_cost_LP_uncon, opt_q_uncon], f)
 f.close()
@@ -144,7 +144,7 @@ f = open('model-in.pckl', 'wb')
 pickle.dump([NUMBER_SIMULATIONS, NUMBER_EPISODES, P, R, C, CONSTRAINT, N_STATES, actions, EPISODE_LENGTH, delta], f)
 f.close()
 
-print('*******')
-print(opt_value_LP_uncon[0, 0])
-print(opt_value_LP_con[0, 0])
-print(value_b[0, 0],cost_b[0,0])
+print('\n*******')
+print("opt_value_LP_uncon[0, 0] =",opt_value_LP_uncon[0, 0])
+print("opt_value_LP_con[0, 0] =",opt_value_LP_con[0, 0])
+print("value_b[0, 0] =",value_b[0, 0])

@@ -31,7 +31,7 @@ f.close()
 
 
 f = open('solution-in.pckl', 'rb')
-[opt_policy_con, opt_value_LP_con, opt_cost_LP_con, opt_q_con, opt_policy_uncon, opt_value_LP_uncon, opt_cost_LP_uncon, opt_q_uncon] = pickle.load(f)
+[opt_policy_con, opt_value_LP_con, opt_cost_LP_con, opt_q_con, opt_policy_uncon, opt_value_LP_uncon, opt_cost_LP_uncon, opt_q_uncon] = pickle.load(f) # unconstrained solution is not used in DOPE
 f.close()
 
 
@@ -47,7 +47,7 @@ Cb = cost_b[0, 0]
 
 print("CONSTRAINT - Cb =", CONSTRAINT - Cb)
 
-K0 =int(N_STATES**3*EPISODE_LENGTH**3/((CONSTRAINT - Cb)**2)) # this is the number of episodes to run the base policy
+K0 =int(N_STATES**3*EPISODE_LENGTH**3/((CONSTRAINT - Cb)**2)) # this is the number of episodes to run the base policy, implementation difference?
 # K0 = N_STATES**3*EPISODE_LENGTH**4/((CONSTRAINT - Cb)**2)
 # N_STATES ~ A, thus N_STATES**3. But in the paper, EPISODE_LENGTH is **4 
 # In the paper, it is calculated as K0 = N_STATES**2 *A *EPISODE_LENGTH**4/((CONSTRAINT - Cb)**2)
@@ -66,7 +66,7 @@ NUMBER_INFEASIBILITIES = np.zeros((NUMBER_SIMULATIONS, NUMBER_EPISODES))
 
 
 L = math.log(6 * N_STATES**2 * EPISODE_LENGTH * NUMBER_EPISODES / DELTA)#math.log(2 * N_STATES * EPISODE_LENGTH * NUMBER_EPISODES * N_STATES**2 / DELTA)
-# L missing *2, as shown in the paper
+# L missing *2, as shown in the paper ?
 
 
 for sim in range(NUMBER_SIMULATIONS):
@@ -99,7 +99,7 @@ for sim in range(NUMBER_SIMULATIONS):
                 print(log)
         
         if episode == 0:
-            ObjRegret2[sim, episode] = abs(val_k[0, 0] - opt_value_LP_con[0, 0]) # for episode 0, calculate the objective regret
+            ObjRegret2[sim, episode] = abs(val_k[0, 0] - opt_value_LP_con[0, 0]) # for episode 0, calculate the objective regret, we care about the value of a policy at the initial state
             ConRegret2[sim, episode] = max(0, cost_k[0, 0] - CONSTRAINT)
             objs.append(ObjRegret2[sim, episode])
             cons.append(ConRegret2[sim, episode])

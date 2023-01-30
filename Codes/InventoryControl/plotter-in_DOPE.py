@@ -25,8 +25,12 @@ con_opsrl = np.zeros((NUMBER_SIMULATIONS ,NUMBER_EPISODES_o))
 
 for i in range(NUMBER_SIMULATIONS):
     print(i)
+    
     # filename = '../opsrl-in5' + str(i+1) +'.pckl'
-    filename = 'opsrl-in10.pckl'
+    filename = 'opsrl-seed100-in100.pckl'
+    # filename = 'opsrl-ns7-in10.pckl'
+    # filename = 'opsrl-in10.pckl'
+    
     f = open(filename, 'rb')
     objs = []
     cons = []

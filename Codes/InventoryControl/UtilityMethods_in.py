@@ -314,7 +314,7 @@ class utils:
         """
 
         opt_policy = np.zeros((self.N_STATES,self.EPISODE_LENGTH,self.N_STATES)) #[s,h,a]
-        opt_prob = p.LpProblem("OPT_LP_problem",p.LpMaximize)
+        opt_prob = p.LpProblem("OPT_LP_problem", p.LpMaximize)
         opt_z = np.zeros((self.EPISODE_LENGTH,self.N_STATES,self.N_STATES,self.N_STATES)) #[h,s,a,s_], decision variable, state-action-state occupancy measure
         #create problem variables
         

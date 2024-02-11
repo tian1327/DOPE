@@ -10,8 +10,11 @@ from matplotlib.ticker import StrMethodFormatter
 a = 0.8 # alpha
 
 NUMBER_SIMULATIONS = 1 # 4
-NUMBER_EPISODES_o = 300000
-NUMBER_EPISODES = 300000
+
+# NUMBER_EPISODES_o = 300000
+NUMBER_EPISODES_o = int(1e4)
+# NUMBER_EPISODES = 300000
+NUMBER_EPISODES = int(1e4)
 
 obj_opsrl = np.zeros((NUMBER_SIMULATIONS ,NUMBER_EPISODES_o))
 con_opsrl = np.zeros((NUMBER_SIMULATIONS ,NUMBER_EPISODES_o))
@@ -27,9 +30,9 @@ for i in range(NUMBER_SIMULATIONS):
     print(i)
     
     # filename = '../opsrl-in5' + str(i+1) +'.pckl'
-    filename = 'opsrl-seed100-in100.pckl'
+    # filename = 'opsrl-seed100-in100.pckl'
     # filename = 'opsrl-ns7-in10.pckl'
-    # filename = 'opsrl-in10.pckl'
+    filename = 'opsrl-in10.pckl'
     
     f = open(filename, 'rb')
     objs = []
@@ -130,8 +133,11 @@ con_opsrl_std = np.std(con_opsrl, axis = 0)
 # con_Tao_mean = np.mean(con_Tao, axis = 0)
 # con_Tao_std = np.std(con_Tao, axis = 0)
 
-NUMBER_EPISODES_o = 300000
-NUMBER_EPISODES = 300000
+# NUMBER_EPISODES_o = 300000
+NUMBER_EPISODES_o = int(1e4)
+# NUMBER_EPISODES = 300000
+NUMBER_EPISODES = int(1e4)
+
 
 L = 1000
 
@@ -171,7 +177,7 @@ ax.set_ylim([-0.1e6,1.55e6])
 plt.xlabel('Episode')
 plt.ylabel('Objective Regret')
 plt.tight_layout()
-plt.savefig("objectiveregretIn.pdf")
+plt.savefig("objectiveregretIn.png")
 plt.show()
 
 
@@ -184,7 +190,7 @@ plt.grid()
 plt.xlabel('Episodes')
 plt.ylabel('Objective Regret square root curve')
 plt.tight_layout()
-plt.savefig("objectiveregretSQRTIn.pdf")
+plt.savefig("objectiveregretSQRTIn.png")
 plt.show()
 
 
@@ -210,6 +216,6 @@ plt.legend(loc = 'center right',prop={'size': 13})
 plt.xlabel('Episode')
 plt.ylabel('Constraint Regret')
 plt.tight_layout()
-plt.savefig("constraintregretIn.pdf")
+plt.savefig("constraintregretIn.png")
 plt.show()
 

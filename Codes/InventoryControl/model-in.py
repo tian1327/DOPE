@@ -50,11 +50,12 @@ R = {} # dictionary of reward matrices
 C = {} # dictionary of cost matrices
 P = {} # dictionary of transition probability matrices
 
-demand = [0.3,0.2,0.2,0.2,0.05,0.05] # probability of stochastic demand, dh in {0, 1, 2, 3, 4, 5, 6}, missing 1 probability!!
+demand = [0.3, 0.2, 0.2, 0.2, 0.05, 0.05] # probability of stochastic demand, dh in {0, 1, 2, 3, 4, 5, 6}, missing 1 probability!!
 
+# action space for each state
 for s in range(N_STATES): # 0-5
     actions[s] = []
-    for a in range(N_STATES - s): # shouldn't this be range(N_STATES - s + 1)?
+    for a in range(N_STATES - s): # shouldn't this be range(N_STATES - s + 1)? s=0, a=0-6, s=1, a=0-5, etc.
         actions[s].append(a) # initialize available actions for each state
 
 for s in range(N_STATES):
@@ -80,7 +81,7 @@ for s in range(N_STATES):
 for s in range(N_STATES):
     for a in actions[s]:        
       for d in range(N_STATES):
-            s_ = min(max(0,s+a-d),N_STATES-1)
+            s_ = min(max(0, s+a-d), N_STATES-1)
             if s + a - d >= 0:
                 R[s][a] += P[s][a][s_]*f(d) # probability of demand d * revenue from demand d = expected revenue
             else:
@@ -92,7 +93,6 @@ r_max = R[0][0]
 c_max = C[0][0]
 print("P")
 pp.pprint(P)
-
 
 for s in range(N_STATES):
     for a in actions[s]:
@@ -117,10 +117,11 @@ CONSTRAINT = EPISODE_LENGTH/2
 C_b = CONSTRAINT/5  #Change this if you want different baseline policy. here is 0.2C
 
 # NUMBER_EPISODES = 1e6
-NUMBER_EPISODES = 3e5
+# NUMBER_EPISODES = 3e5
+NUMBER_EPISODES = 1e4
+
 
 NUMBER_SIMULATIONS = 1
-
 
 EPS = 0.01 # not used
 M = 0 # not used

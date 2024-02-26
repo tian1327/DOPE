@@ -64,7 +64,7 @@ for s in range(N_STATES):
     C[s] = np.zeros(l)
     P[s] = {}
     for a in actions[s]:
-        C[s][a] = O(a) + h(s+a) # cost of taking action a in state s = order cost + holding cost
+        C[s][a] = O(a) + h(s+a) # cost of taking action a in state s = order cost + holding cost, why is h(s+a) instead of h(s)?
         P[s][a] = np.zeros(N_STATES) # transition probability matrix
         for d in range(N_STATES): # Assume N_STATES = 7, d = 0,1,2,3,4,5,6
             s_ = s + a - d # next state
@@ -74,6 +74,7 @@ for s in range(N_STATES):
                 s_ = N_STATES - 1 # make sure next state is within bounds [0, N_STATES-1]
                 
             P[s][a][s_] += demand[d] # assign transition probability based on demand probability
+            
         R[s][a] = 0
         # for s_ in range(N_STATES):
         #     R[s][a] += P[s][a][s_]*f(s_)
@@ -120,7 +121,6 @@ C_b = CONSTRAINT/5  #Change this if you want different baseline policy. here is 
 # NUMBER_EPISODES = 3e5
 NUMBER_EPISODES = 1e4
 
-
 NUMBER_SIMULATIONS = 1
 
 EPS = 0.01 # not used
@@ -133,13 +133,11 @@ f = open('solution-in.pckl', 'wb')
 pickle.dump([opt_policy_con, opt_value_LP_con, opt_cost_LP_con, opt_q_con, opt_policy_uncon, opt_value_LP_uncon, opt_cost_LP_uncon, opt_q_uncon], f)
 f.close()
 
-
-util_methods_1 = utils(EPS, delta, M, P,R,C,EPISODE_LENGTH,N_STATES,actions,C_b,C_b)
+util_methods_1 = utils(EPS, delta, M, P, R , C, EPISODE_LENGTH, N_STATES, actions, C_b, C_b)
 policy_b, value_b, cost_b, q_b = util_methods_1.compute_opt_LP_Constrained(0)
 f = open('base-in.pckl', 'wb')
 pickle.dump([policy_b, value_b, cost_b, q_b], f)
 f.close()
-
 
 f = open('model-in.pckl', 'wb')
 pickle.dump([NUMBER_SIMULATIONS, NUMBER_EPISODES, P, R, C, CONSTRAINT, N_STATES, actions, EPISODE_LENGTH, delta], f)
